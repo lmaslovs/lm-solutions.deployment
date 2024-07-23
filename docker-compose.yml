@@ -3,19 +3,21 @@ services:
   lm-solutions-nextjs:
     image: lmaslovs/lm-solutions:latest
     expose:
-      - "3000" # Expose the internal port
+      - "3000"
     networks:
       - lm-solutions-network
 
   lm-solutions-nginx:
     image: nginx:latest
     ports:
-      - "81:80" # Use port 81 for HTTP to avoid conflict with other services on port 80
+      - "81:80"
+      - "444:443"
     environment:
       - SERVER_NAME=${SERVER_NAME}
     command: /bin/bash -c "envsubst '$$SERVER_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     volumes:
       - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - lm-solutions-nextjs
     networks:
