@@ -1,7 +1,9 @@
 version: "3.8"
 services:
   lm-solutions-nextjs:
-    image: your-lm-solutions-nextjs-image:latest
+    image: lmaslovs/lm-solutions:latest
+    expose:
+      - "3000" # Expose the internal port
     networks:
       - lm-solutions-network
 
@@ -11,7 +13,7 @@ services:
       - "81:80"
       - "444:443"
     environment:
-      - SERVER_NAME=${LM_SOLUTIONS_SERVER_NAME}
+      - SERVER_NAME=${SERVER_NAME}
     command: /bin/bash -c "envsubst '$$SERVER_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
     volumes:
       - ./lm-solutions-nginx.conf.template:/etc/nginx/nginx.conf.template:ro
