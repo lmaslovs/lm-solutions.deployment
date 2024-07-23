@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  lm-solutions-nextjs:
+    image: your-lm-solutions-nextjs-image:latest
+    networks:
+      - lm-solutions-network
+
+  lm-solutions-nginx:
+    image: nginx:latest
+    ports:
+      - "81:80"
+      - "444:443"
+    environment:
+      - SERVER_NAME=${LM_SOLUTIONS_SERVER_NAME}
+    command: /bin/bash -c "envsubst '$$SERVER_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+    volumes:
+      - ./lm-solutions-nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - lm-solutions-nextjs
+    networks:
+      - lm-solutions-network
+
+networks:
+  lm-solutions-network:
+    driver: bridge
